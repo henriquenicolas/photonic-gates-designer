@@ -1,0 +1,39 @@
+html {
+	height: 100%;
+}
+
+@font-face {
+	font-family: SnackerComic;
+	src: url("#{resource['fonts:SnackerComic.ttf']}");
+}
+
+@font-face {
+	font-family: QuinchoScript;
+	src: url("#{resource['fonts:QuinchoScript.ttf']}");
+}
+
+body {
+	background-color: #FF9900;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	justify-content: center;
+}
+
+h1 {
+	font-family: QuinchoScript;
+	font-size: 6em;
+	text-align: center;
+	margin: 0.2em;
+}
+
+#loginForm {
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+}
+
+#loginForm div {
+	justify-content: flex-end;
+	display: flex;
+}

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+	<title>Results</title>
+	<h:outputStylesheet library="css" name="layout.css" />
+</h:head>
+<h:body>
+	<h:form id="Results">
+    	<p:dataList value="#{dataListView.simulation}" var="simulation" type="ordered">
+        	<f:facet name="header">
+            	Results
+        	</f:facet>
+        	#{simulation.id}, #{simulation.originalSig1}, #{simulation.originalSigN}, #{simulation.errors1}, #{simulation.errorsN}, #{simulation.avgSig1}, #{simulation.avgSigN} 
+    	</p:dataList>
+	</h:form>
+</h:body>
+</html>

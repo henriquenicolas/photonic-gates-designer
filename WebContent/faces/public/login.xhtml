@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+	<h:outputStylesheet library="css" name="login.css" />
+</h:head>
+<h:body>
+	<h:form id="loginForm">
+		<h1>Mimimi</h1>
+		<p:messages id="messages" globalOnly="true" />
+		<table>
+			<tbody>
+				<tr>
+					<td><p:outputLabel for="username"
+							value="#{messages['pgd.username']}" /></td>
+					<td><p:inputText id="username" required="true"
+							requiredMessage="Esse campo deve ser preenchido."
+							value="#{loginBean.username}" /></td>
+					<td>
+					<p:message for="username" />
+					</td>
+				</tr>
+				<tr>
+					<td><p:outputLabel for="password"
+							value="#{messages['pgd.password']}" /></td>
+					<td><p:password id="password" required="true"
+							requiredMessage="Esse campo deve ser preenchido."
+							value="#{loginBean.password}" /></td>
+					<td>
+					<p:message for="password" />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div style="padding-top: 1em">
+			<p:commandButton action="#{pgd.login}" update="@form"
+				value="#{messages['pgd.login']}" />
+			<p:commandButton action="pretty:signup" immediate="true"
+				value="#{messages['pgd.signup']}" />
+		</div>
+	</h:form>
+</h:body>
+</html>

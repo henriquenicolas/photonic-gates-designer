@@ -7,4 +7,14 @@
 		<view-id value="/faces/public/index.xhtml" />
 	</url-mapping>
 	
+	<url-mapping id="login">
+		<pattern value="/login" />
+		<view-id value="/faces/public/login.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="sign-up">
+		<pattern value="/sign-up" />
+		<view-id value="/faces/public/sign-up.xhtml" />
+	</url-mapping>
+	
 </pretty-config>

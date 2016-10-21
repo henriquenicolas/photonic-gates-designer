@@ -3,11 +3,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:f="http://java.sun.com/jsf/core">
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 <h:head>
 	<title>Photonic Gates Designer</title>
+	<h:outputStylesheet library="css" name="layout.css" />
 </h:head>
-<h:body>
+<h:body style="background: url('#{resource['images:wallpaper.jpg']}'); background-size: 100% auto; color:white;">
+	<p:graphicImage library="images" name="wallpaper.jpg"/>
+	<h:outputScript library="js" name="bla.js"></h:outputScript>
 	<h2>Photonic Gates Designer</h2>
+	<p>Os Cristais Fotônicos consistem em estruturas com baixa absorção de luz e índices de refração periódicos em uma, duas ou três dimensões. Essas estruturas podem ser concebidas para controlar a luz e, em consequência disso, executar um cálculo computacional. As estruturas bidimensionais podem ser desenvolvidas para proporcionar um intervalo de banda completo, o que limita a direção e o comprimento de onda da propagação da luz. A ideia consiste em gerar defeitos nas estruturas cristalinas, de forma que a luz seja guiada por um caminho, ou seja, uma cavidade na qual seja possível controlar o fluxo da onda eletromagnética e criar lógica através da interferência construtiva e destrutiva de ondas.</p>
+	<h:link outcome="pretty:login" value="Login"/>
+	
 </h:body>
 </html>
