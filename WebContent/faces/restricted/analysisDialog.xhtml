@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition>
+	<p:dialog widgetVar="analysisDialog" header="Robustness Analysis"
+		modal="true" appendTo="@(body) ">
+		<h:form>
+			<h:panelGrid columns="2" cellpadding="2">
+				<p:outputLabel for="weight" value="Weight of cylinders" />
+				<p:inputText id="weight" value="#{analysisBean.weight}" />
+
+				<p:outputLabel for="sigma" value="Sigma" />
+				<p:inputText id="sigma" value="#{analysisBean.sigma}" />
+
+				<p:outputLabel for="region" value="Region" />
+				<p:inputText id="region" value="#{analysisBean.region}" />
+			
+			</h:panelGrid>
+			<p:commandButton value="OK" update=":analysisForm:results :message" actionListener="#{analysisBean.run}"
+				styleClass="ui-priority-primary" icon="fa fa-check"
+				onclick="PF('analysisDialog').hide()">
+				<f:param name="crystal" value="#{param.crystal}"/>
+			</p:commandButton>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>
+</html>

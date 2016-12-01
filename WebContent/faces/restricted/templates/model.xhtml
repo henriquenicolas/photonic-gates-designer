@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+	<h:outputStylesheet library="css" name="bootstrap.css" />
+	<h:outputScript library="js" name="intranet/model.js"/>
+	<title>Photonic Gates Designer</title>
+</h:head>
+<h:body style="margin: 0 auto;">
+	<p:growl id="message" widgetVar="messages" showDetail="false" autoUpdate="true"/>
+	<pe:layout fullPage="true">
+		<pe:layoutPane id="headerLayoutPane" position="north" closable="false" resizable="false">
+			<ui:include src="header.xhtml"/>
+		</pe:layoutPane>
+		<pe:layoutPane position="center" id="layoutCenter">
+			<ui:insert name="main">
+			</ui:insert>
+			<pe:blockUI widgetVar="blockPageWidget">
+        		LOADING<br />
+        		<p:graphicImage library="pictures" name="ajaxloadingbar.gif"/>
+    		</pe:blockUI>
+		</pe:layoutPane>
+		<pe:layoutPane id="footerLayoutPane" position="south" closable="false" resizable="false">
+			<ui:insert name="footer">
+				<ui:include src="footer.xhtml"/>
+			</ui:insert>
+		</pe:layoutPane>
+	</pe:layout>
+	<ui:insert name="dialogs"/>
+    <p:socket rendered="#{not empty intranetLoginBean.channel}" channel="#{intranetLoginBean.channel}" onMessage="notify"/>
+</h:body>
+</html>

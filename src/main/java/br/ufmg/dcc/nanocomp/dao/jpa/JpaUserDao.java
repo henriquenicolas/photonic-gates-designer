@@ -33,9 +33,9 @@ public class JpaUserDao extends AbstractJpaDao<String, User> implements UserDao 
 	}
 
 	@Override
-	public User login(String username, String password) {
+	public User login(String email, String password) {
 		HashMap<String, Object> params = new HashMap<>(2);
-		params.put("username", username);
+		params.put("email", email);
 		params.put("password", getSHA1Code(password));
 		return super.findSingleResult(User.LOGIN, params);
 	}

@@ -12,6 +12,16 @@
 		<view-id value="/faces/public/login.xhtml" />
 	</url-mapping>
 	
+	<url-mapping id="crystals">
+		<pattern value="/crystals" />
+		<view-id value="/faces/restricted/crystals.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="analysis">
+		<pattern value="/analysis" />
+		<view-id value="/faces/restricted/analysis.xhtml" />
+	</url-mapping>
+	
 	<url-mapping id="sign-up">
 		<pattern value="/sign-up" />
 		<view-id value="/faces/public/sign-up.xhtml" />

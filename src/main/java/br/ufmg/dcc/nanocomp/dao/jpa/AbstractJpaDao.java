@@ -20,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufmg.dcc.nanocomp.dao.Dao;
+import br.ufmg.dcc.nanocomp.dao.DaoException;
 import br.ufmg.dcc.nanocomp.jsf.JpaFilter;
 import br.ufmg.dcc.nanocomp.model.EntityInterface;
 
@@ -67,11 +68,15 @@ public abstract class AbstractJpaDao<IdType extends Serializable,T extends Entit
 	/**
 	 * Method used to delete a given entity from the database.
 	 * @param entity The entity to be deleted.
+	 * @throws DaoException 
 	 */
-	public void delete(T entity) {
-		T entityToBeRemoved = getEntityManager().merge(entity);
-		getEntityManager().remove(entityToBeRemoved);
-		flushConnection();
+	public void delete(T entity) throws DaoException {
+		try {
+			getEntityManager().remove(find(entity.getId()));
+			flushConnection();
+		} catch (Exception e) {
+			throw new DaoException("Failed to delete entity",e);
+		}
 	}
 
 	/**

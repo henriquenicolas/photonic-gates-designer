@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration scan="true" scanPeriod="3 seconds" debug="false">
+
+	<contextName>PGD</contextName>
+	<property name="LOGS_FOLDER" value="${catalina.home}/logs/" />
+	<property name="CONTEXT_NAME" value="PGD" />
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>%d %contextName [%t] %-5level %logger{36} - %msg%n</Pattern>
+		</encoder>
+	</appender>
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator" />
+
+	<logger name="javax.faces" level="INFO" />
+	<logger name="org.hibernate.type" level="INFO" />
+	<logger name="org.hibernate" level="INFO" />
+	<logger
+		name="org.hibernate.search.batchindexing.impl.SimpleIndexingProgressMonitor"
+		level="WARN" />
+
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

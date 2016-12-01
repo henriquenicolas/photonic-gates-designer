@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="templates/model.xhtml">
+	<ui:define name="main">
+		<ui:include src="analysisDialog.xhtml" />
+		<h:form id="analysisForm">
+			<div
+				style="display: flex; justify-content: space-between; align-items: center;">
+				<p:commandButton id="analysis-button"
+					styleClass="ui-priority-primary" type="button" value="Nova análise"
+					icon="fa fa-line-chart" onclick="PF('analysisDialog').show()" />
+
+				<h:panelGrid columns="2">
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:outputLabel for="frequency" value="Frequência: " />
+						<p:inputMask id="frequency" value="#{analysisBean.frequency}" />
+
+						<p:outputLabel for="tolerance" value="Tolerância: " />
+						<p:inputMask id="tolerance" value="#{analysisBean.tolerance}" />
+					</h:panelGrid>
+					<h:panelGrid columns="2" cellpadding="5">
+
+						<p:outputLabel for="expected" value="Expected results" />
+						<p:inputText id="expected" value="#{analysisBean.expectedResults}" />
+
+						<p:commandButton value="Atualizar valores"
+							styleClass="ui-priority-primary" update="results :message"
+							actionListener="#{analysisBean.update}">
+							<f:param name="crystal" value="#{param.crystal}"/>
+						</p:commandButton>
+					</h:panelGrid>
+				</h:panelGrid>
+			</div>
+			<p:dataTable id="results" var="r" value="#{analysisBean.results}">
+
+				<p:column headerText="Status">
+					<h:outputText
+						styleClass="fa #{r.robustnessAnalysis.running?'fa-spinner':'fa-check'}" />
+				</p:column>
+
+				<p:column headerText="Análise">
+					<h:outputText value="#{r.robustnessAnalysis.id}" />
+				</p:column>
+
+				<p:column headerText="Data">
+					<h:outputText value="#{r.robustnessAnalysis.date}" />
+				</p:column>
+
+				<p:column headerText="Região de fluxo">
+					<h:outputText value="#{r.index}" />
+				</p:column>
+
+				<p:column headerText="Resultado original">
+					<h:outputText value="#{r.originalResult}" />
+				</p:column>
+
+				<p:column headerText="Média dos resultados">
+					<h:outputText value="#{r.averageResult}" />
+				</p:column>
+
+				<p:column headerText="Número de erros">
+					<h:outputText value="#{r.errorCount}" />
+				</p:column>
+
+				<p:column headerText="Porcentagem de erros">
+					<h:outputText value="#{r.errorPercentage}" />
+				</p:column>
+
+			</p:dataTable>
+
+
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -2,16 +2,6 @@ html {
 	height: 100%;
 }
 
-@font-face {
-	font-family: SnackerComic;
-	src: url("#{resource['fonts:SnackerComic.ttf']}");
-}
-
-@font-face {
-	font-family: QuinchoScript;
-	src: url("#{resource['fonts:QuinchoScript.ttf']}");
-}
-
 body {
 	background-color: #D7DDEF;
 	display: flex;
@@ -21,8 +11,6 @@ body {
 }
 
 h1 {
-	font-family: QuinchoScript;
-	font-size: 6em;
 	text-align: center;
 	margin: 0.2em;
 }

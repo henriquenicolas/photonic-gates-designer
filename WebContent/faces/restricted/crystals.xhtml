@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="templates/model.xhtml">
+	<ui:define name="main">
+		<h:form>
+			<p:fileUpload mode="advanced" skinSimple="false" update="crystals :message"
+				auto="true" allowTypes="/(\.|\/)(ctl)$/" fileUploadListener="#{crystalsBean.upload}"/>
+			<p:dataTable id="crystals" var="crystal" value="#{crystalsBean.crystals}">
+				<p:column headerText="Id">
+					<h:outputText value="#{crystal.id}" />
+				</p:column>
+				
+				<p:column headerText="Nome">
+					<h:outputText value="#{crystal.name}" />
+				</p:column>
+
+				<p:column headerText="Date">
+					<h:outputText value="#{crystal.date}" />
+				</p:column>
+
+				<p:column headerText="Download">
+					<p:commandButton value="Download" ajax="false"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{crystalsBean.download(crystal)}" />
+					</p:commandButton>
+				</p:column>
+
+				<p:column headerText="Análises">
+					<h:link outcome="pretty:analysis">
+						<p:commandButton type="button" value="Ver"/>
+						<f:param name="crystal" value="#{crystal.id}" />
+					</h:link>
+				</p:column>
+				
+				<p:column headerText="Excluir">
+					<p:commandButton value="Excluir" update=":message crystals"
+						actionListener="#{crystalsBean.delete(crystal)}"/>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -45,7 +45,7 @@ public class LoginBean extends AbstractBean {
 				return null;
 			} else {
 				getSession().setAttribute("logged", Boolean.TRUE);
-				return "pretty:pgd";
+				return "pretty:crystals";
 			}
 		} catch(Exception e) {
 			LOGGER.error("An error occurred while trying to login",e);

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import br.ufmg.dcc.nanocomp.dao.Dao;
 import br.ufmg.dcc.nanocomp.dao.DaoFactory;
 import br.ufmg.dcc.nanocomp.model.EntityInterface;
+import br.ufmg.dcc.nanocomp.model.User;
 
 /**
  * Abstract class for {@link ManagedBean}
@@ -130,6 +131,14 @@ public abstract class AbstractBean implements Serializable {
 	 */
 	protected final static String getRealPath(String path){
 		return getServletContext().getRealPath(path);
+	}
+	
+	protected final static String getParameter(String name) {
+		return getHttpServletRequest().getParameter(name);
+	}
+	
+	protected User getUser() {
+		return getSessionBean(LoginBean.class).getUser();
 	}
 	
 }

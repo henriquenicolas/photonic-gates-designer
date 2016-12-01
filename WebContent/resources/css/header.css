@@ -1,0 +1,40 @@
+.ui-button-icon-left.ui-icon.ui-c.fa.fa-line-chart {
+	font-size:0.8em;
+}
+
+.ui-layout-north {
+     z-index:40 !important;
+     overflow:visible !important;
+}
+
+.ui-layout-north .ui-layout-unit-content {
+    overflow:visible !important;
+}
+
+.ui-menuitem {
+	margin-right:1em !important;
+}
+
+#headerLayoutPane{
+	background-color:#204d74;
+}
+
+#footerLayoutPane{
+	background-color:#204d74;
+	color:white;
+}
+
+.ui-menu.ui-menubar {
+	background-color:inherit!important;
+	background-image:inherit!important;
+	border:none!important
+}
+
+.ui-menu.ui-widget a {
+	color: white;
+}
+
+.ui-menu.ui-menubar .ui-menu-parent .ui-menu-child {
+	background-color:#204d74!important;
+	border:none!important
+}

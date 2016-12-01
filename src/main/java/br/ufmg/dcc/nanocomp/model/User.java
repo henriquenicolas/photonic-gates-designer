@@ -37,11 +37,11 @@ public class User implements EntityInterface<String> {
 	@Column
 	private String password;
 	
-	@OneToMany(mappedBy = "owner", targetEntity = Simulation.class,
+	@OneToMany(mappedBy = "owner", targetEntity = PhotonicCrystal.class,
 			fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private List<Simulation> simulations;
+	private List<PhotonicCrystal> simulations;
 	
 	@Override
 	public String getId() {
@@ -72,11 +72,11 @@ public class User implements EntityInterface<String> {
 		this.password = password;
 	}
 
-	public List<Simulation> getSimulations() {
+	public List<PhotonicCrystal> getSimulations() {
 		return simulations;
 	}
 
-	public void setSimulations(List<Simulation> simulations) {
+	public void setSimulations(List<PhotonicCrystal> simulations) {
 		this.simulations = simulations;
 	}
 	

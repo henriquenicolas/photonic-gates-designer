@@ -11,25 +11,25 @@
 </h:head>
 <h:body>
 	<h:form id="loginForm">
-		<h1>Mimimi</h1>
+		<h2>Photonic Gates Designer</h2>
 		<p:messages id="messages" globalOnly="true" />
 		<table>
 			<tbody>
 				<tr>
-					<td><p:outputLabel for="username"
-							value="#{messages['pgd.username']}" /></td>
-					<td><p:inputText id="username" required="true"
-							requiredMessage="Esse campo deve ser preenchido."
-							value="#{loginBean.username}" /></td>
+					<td><p:outputLabel for="email"
+							value="#{messages['login.email']}" /></td>
+					<td><p:inputText id="email" required="true"
+							requiredMessage="#{messages['login.required']}"
+							value="#{loginBean.email}" /></td>
 					<td>
-					<p:message for="username" />
+					<p:message for="email" />
 					</td>
 				</tr>
 				<tr>
 					<td><p:outputLabel for="password"
-							value="#{messages['pgd.password']}" /></td>
+							value="#{messages['login.password']}" /></td>
 					<td><p:password id="password" required="true"
-							requiredMessage="Esse campo deve ser preenchido."
+							requiredMessage="#{messages['login.required']}"
 							value="#{loginBean.password}" /></td>
 					<td>
 					<p:message for="password" />
@@ -38,10 +38,10 @@
 			</tbody>
 		</table>
 		<div style="padding-top: 1em">
-			<p:commandButton action="#{pgd.login}" update="@form"
-				value="#{messages['pgd.login']}" />
-			<p:commandButton action="pretty:signup" immediate="true"
-				value="#{messages['pgd.signup']}" />
+			<p:commandButton action="#{loginBean.login}" update="@form"
+				value="#{messages['login.login']}" />
+			<p:commandButton action="pretty:sign-up" immediate="true"
+				value="#{messages['login.signup']}" />
 		</div>
 	</h:form>
 </h:body>

@@ -2,29 +2,12 @@ html {
 	height: 100%;
 }
 
-@font-face {
-	font-family: SnackerComic;
-	src: url("#{resource['fonts:SnackerComic.ttf']}");
-}
-
-@font-face {
-	font-family: QuinchoScript;
-	src: url("#{resource['fonts:QuinchoScript.ttf']}");
-}
-
 body {
 	background-color: #D7DDEF;
 	display: flex;
 	align-items: center;
 	height: 100%;
 	justify-content: center;
-}
-
-h1 {
-	font-family: QuinchoScript;
-	font-size: 6em;
-	text-align: center;
-	margin: 0.2em;
 }
 
 #loginForm {
@@ -36,4 +19,9 @@ h1 {
 #loginForm div {
 	justify-content: flex-end;
 	display: flex;
+}
+
+#inputText{
+	background-color: #D7DDEF;
+	
 }
