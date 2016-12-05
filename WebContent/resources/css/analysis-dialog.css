@@ -1,0 +1,25 @@
+.block {
+	position: absolute;
+	background-color: black;
+	opacity: 0.1;
+}
+
+#region {
+	position: absolute;
+	font-size: 0;
+}
+
+.cylinder {
+	position: absolute;
+	border-color: black;
+	border-style: solid;
+	border-radius: 50%;
+	border-width: 2px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.cylinder.selected {
+	border-color: #f69c55;
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	template="templates/model.xhtml">
+	<ui:define name="main">
+		<h:outputStylesheet library="css" name="editor.css" />
+		<pe:layoutPane position="west" size="500">
+			<pe:layoutPane position="north">
+				<p:toolbar>
+					<f:facet name="left">
+						<p:commandButton type="button" value="Carregar arquivo"
+							onclick="$('#file-input').click()" />
+						<p:commandButton type="button"
+							value="Nova" icon="ui-icon-document"/>
+
+						<p:commandButton type="button"
+							title="Baixar" icon="ui-icon-disk" />
+					</f:facet>
+				</p:toolbar>
+				<input id="file-input" type="file"
+					onchange="handleFileSelect(event)" />
+			</pe:layoutPane>
+			<pe:layoutPane position="center">
+				<f:facet name="header">
+					<h:outputText value="Código fonte"/>
+				</f:facet>
+				<div id="cli-editor"></div>
+			</pe:layoutPane>
+		</pe:layoutPane>
+		<pe:layoutPane position="center">
+			<f:facet name="header">
+				<h:outputText value="Cristal"/>
+			</f:facet>
+			<div id="gui-editor" onkeydown="editorKeydown(event)" tabindex="0" />
+		</pe:layoutPane>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
+		<h:outputScript library="js" name="highlight.js" />
+		<h:outputScript library="js" name="editor.js" />
+		<h:outputScript library="js" name="ctl-parser.js" />
+	</ui:define>
+</ui:composition>

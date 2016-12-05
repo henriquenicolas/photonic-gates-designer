@@ -1,0 +1,749 @@
+{
+	class Variable {
+		constructor(name) {
+			this.name = name;
+		}
+		getValue() {
+			if(this.value!=undefined)
+				return this.value;
+			throw new CtlError("Variable "+this.name+" undefined");
+		}
+		setValue(value) {
+			this.value = value;
+		}
+	}
+	class Constant extends Variable {
+		constructor(value) {
+			super(null);
+			super.setValue(value);
+		}
+		setValue(value) {
+			throw new CtlError("Constant can not have it's value set")
+		}
+	}
+	var zero = new Constant(0);
+	class Vector3 {
+		constructor(x=zero,y=zero,z=zero) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+	}
+	class CtlError extends Error {
+		constructor(m){
+			super(m)
+			this.location = location();
+			console.log(this);
+		}
+	}
+	if(typeof(ace)=="object") {
+		var Range = ace.require("./range").Range;
+    } else {
+    	var Range = function(){};
+    }
+    function getTyped(p,v,t) {
+    	switch(t) {
+        	case "number":
+            	if(typeof(v)=="number") return v;
+                break;
+            case "vector3":
+            	if(v.x!=undefined) return v;
+            	break;
+        }
+    	throw new CtlError("Property "+p+" should be a "+t+" but is "+v)
+    }
+    var params = {};
+    var functions = {
+    	"reset-meep":{},
+        "at-beginning":{},
+        "at-end":{},
+        "run-until":{},
+        "run-sources+":{}
+    };
+    
+	var memory = {};
+	var fargs = {};
+	var fname = null;
+	var cancel = false;
+}
+
+File
+	= objects:(Set/Define/DefineFunction/Function)* {
+		if(cancel) return;
+    	var l = params["geometry-lattice"];
+        if(l==undefined) {
+        	throw new CtlError("The geometry-lattice parameter must be set");
+        }
+		return l;
+	}
+
+Set
+	= _ "(" _ ("set-param!"/"set!") __ "geometry-lattice" _ value:Lattice _ ")" _ {
+    	params["geometry-lattice"] = value;
+    }
+    / _ "(" _ "set!" __ "resolution" _ value:Variable _ ")" _ {
+    	var v = value.getValue();
+    	if(v!=resolution) {
+    		resolution = v;
+    		cancel = true;
+    	}
+    }
+    / _ "(" _ "set!" __ "geometry" _ &{
+          if(params["geometry-lattice"]==undefined){
+            throw new CtlError("The geometry-lattice parameter must be set before geometry can be");
+          }
+          return true
+        } value:ListGeoObj _ ")" _ {
+        	params["geometry"] = value;
+            var l = params["geometry-lattice"];
+            for(var i in value) {
+            	l.appendChild(value[i]);
+            }
+    }
+    / _ "(" _ "set!" __ "geometry" _ value:Variable _ ")" _ {
+        throw new CtlError("Parameter geometry must be a list of geometric-objects");
+    }
+    / _ "(" _ "set!" __ name:Id _ value:Variable _ ")" _ {
+    	params[name] = value.value;
+    }
+
+Define
+	= _ "(" _ ("define-param"/"define") __ name:Id _ value:Variable* _ ")" _ {
+		if(value.length == 0) throw new CtlError("Definition value missing");
+		if(value.length > 1) throw new CtlError("Definition has too many values");
+    	memory[name] = value[0];
+    }
+    
+DefineFunction
+	= _ "(" _ "define" __ name:DefFunction _ body:Function &{fargs={}; return true} _ ")" _ {
+		return functions[fname] = {
+        	name:name,
+            body:body
+        };
+    }
+
+FuncArg
+	= _ name:Id _ {
+		return fargs[name] = new Variable(name);
+	}
+
+DefFunction
+	= _ "(" _ name:Id _ args:FuncArg* &{fname=name;return true} _ ")" _ {
+		return {
+        	name:name,
+            args:args,
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args.shift().getValue())
+                }
+            }
+        }
+	}
+	/ _ "(" _ func:DefFunction _ args:FuncArg* _ ")" _ {
+		return {
+        	func:func,
+            args:args,
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args.shift().getValue())
+                }
+                this.func.fillArgs(args);
+            }
+        }
+	}
+
+Variable
+	= _ value:(List/Class/Vector/Number) _ {
+		return new Constant(value);
+	}
+	/ _ value:Function _ {
+		return value;
+	}
+	/ _ name:Id &{return fargs[name]!=undefined} _ {
+		return fargs[name];
+	}
+	/ _ name:Id &{return memory[name]!=undefined} _ {
+		return memory[name];
+	}
+    / _ name:Id {
+    	return new Variable(name);
+    }
+
+Vector
+	= _ "(" _ "vector3" _ ")" _ {
+    	throw new CtlError("Vector 3 must have at least one parameter");
+    }
+	/ _ "(" _ "vector3" __ x:Variable _ ")" _ {
+    	return new Vector3(x);
+    }
+    / _ "(" _ "vector3" __ x:Variable _ y:Variable _ ")" _ {
+    	return new Vector3(x,y);
+    }
+    / _ "(" _ "vector3" __ x:Variable _ y:Variable _ z:Variable _ ")" _ {
+    	return new Vector3(x,y,z);
+    }
+    / _ "(" _ "vector3" __ x:Variable* _ ")" _ {
+    	throw new CtlError("Vector 3 must have at most three parameter");
+    }
+
+Function
+	= Sum
+    / Sub
+    / Mul
+    / Div
+    / Exp
+    / UnitVector3
+    / Vector3Scale
+    / Vector3Sum
+    / Vector3Dot
+    / AddFlux
+    / DisplayFluxes
+    / SimpleFunction
+	/ CompositeFunction
+
+DisplayFluxes
+	= _ "(" _ "display-fluxes" _ args:Variable* _ ")" _ {
+    	var l = params["geometry-lattice"];
+        for(var i in args) {
+        	var fluxes = args[i].getValue();
+            for(var j in fluxes) {
+        		l.appendChild(fluxes[j]);
+            }
+        }
+	}
+
+AddFlux
+	= _ "(" _ "add-flux" _ fcen:Variable _ df:Variable _ nfreq:Variable regions:FluxRegion+_ ")" _ {
+    	getTyped("fcen",fcen.getValue(),"number");
+        getTyped("df",fcen.getValue(),"number");
+        getTyped("nfreq",fcen.getValue(),"number");
+    	return new Constant(regions);
+    }
+    / _ "(" _ "add-flux" _ fcen:Variable* _ ")" _ {
+    	throw new CtlError("Wrong number of arguments in add-flux function");
+    }
+
+SimpleFunction
+	= _ "(" _ name:Id _ args:Variable* _ ")" _ {
+    	if(functions[name]!=undefined) {
+          return {
+            name:name,
+            args:args,
+            def:functions[name],
+            getValue:function() {
+              return this.deep(args);
+            },
+            deep:function(args) {
+              this.def.name.fillArgs(args.concat(this.args));
+              return this.def.body.getValue()
+            }
+          };
+        } else {
+        	throw new CtlError("Function "+name+" not defined")
+        }
+	}
+
+CompositeFunction
+	= _ "(" _ name:Function _ args:Variable* _ ")" _ {
+		return {
+        	func:name,
+            args:args,
+            getValue: function() {
+            	return this.func.deep(this.args);
+            },
+            deep: function(args) {
+            	return this.func.deep(args.concat(this.args));
+            },
+        }
+	}
+
+Sum
+	= _ "(" _ "+" _ args:Variable* _ ")" _ {
+		return {
+        	name: "+",
+            args: args,
+            getValue: function(){
+            	if(args.length==0){
+                	throw new CtlError("Function plus get's at least one parameter")
+                } else {
+                  var v = 0;
+                  for(var i in args) {
+                      v+=args[i].getValue();
+                  }
+                  return v;
+                }
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+	}
+
+Sub
+	= _ "(" _ "-" _ args:Variable* _ ")" _ {
+		return {
+        	name: "-",
+            args: args,
+            getValue: function(){
+            	if(args.length==0){
+                	throw new CtlError("Function minus get's at least one parameter")
+                } else if(args.length==1) {
+                	return -1*args[0].getValue();
+                } else {
+                	var v = args[0].getValue();
+                    for(var i = 1; i< args.length; i++){
+                    	v-=args[i].getValue();
+                    }
+                    return v;
+                }
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+	}
+
+Mul
+	= _ "(" _ "*" _ args:Variable* _ ")" _ {
+		return {
+        	name: "*",
+            args: args,
+            getValue: function(){
+            	if(args.length==0){
+                	throw new CtlError("Function multiply get's at least one parameter")
+                } else {
+                  var v = 1;
+                  for(var i in args) {
+                      v*=args[i].getValue();
+                  }
+                  return v;
+                }
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+	}
+
+Div
+	= _ "(" _ "/" _ args:Variable* _ ")" _ {
+		return {
+        	name: "/",
+            args: args,
+            getValue: function(){
+            	if(args.length==0){
+                	throw new CtlError("Function div get's at least one parameter")
+                } else {
+                	var v = args[0].getValue();
+                    for(var i = 1; i< args.length; i++){
+                    	v/=args[i].getValue();
+                    }
+                    return v;
+                }
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+	}
+
+Exp
+	= _ "(" _ "exp" _ args:Variable* _ ")" _ {
+    	return {
+        	name: "exp",
+            args: args,
+            getValue: function(){
+            	throw new CtlError("exp not yet implemented")
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+    }
+
+UnitVector3
+	= _ "(" _ "unit-vector3" _ args:Variable* _ ")" _ {
+    	return {
+        	name: "unit-vector3",
+            args: args,
+            getValue: function(){
+            	throw new CtlError("unit-vector3 not yet implemented")
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+    }
+
+Vector3Scale
+	= _ "(" _ "vector3-scale" _ args:Variable* _ ")" _ {
+    	return {
+        	name: "vector3-scale",
+            args: args,
+            getValue: function(){
+            	throw new CtlError("vector3-scale not yet implemented")
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+    }
+
+Vector3Sum
+	= _ "(" _ "vector3+" _ args:Variable* _ ")" _ {
+    	return {
+        	name: "vector3+",
+            args: args,
+            getValue: function(){
+            	throw new CtlError("vector3+ not yet implemented")
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+    }
+
+Vector3Dot
+	= _ "(" _ "vector3-dot" _ args:Variable* _ ")" _ {
+    	return {
+        	name: "vector3-dot",
+            args: args,
+            getValue: function(){
+            	throw new CtlError("vector3-dot not yet implemented")
+            },
+            deep: function(args) {
+            	this.fillArgs(args);
+                return this.getValue();
+            },
+            fillArgs: function(args) {
+            	for(var i = 0; i<this.args.length; i++) {
+                	this.args[i].setValue(args[i].getValue())
+                }
+            }
+        }
+    }
+
+List
+	= _ "(" _ "list" _ elements:Variable* _ ")" _ {
+    	return elements;
+    }
+
+ListGeoObj
+	= _ "(" _ "list" _ elements:GeoObj* _ ")" _ {
+    	return elements;
+    }
+
+Class
+	= _ "(" _ "make" _ properties:Property* _ ")" _ {	
+		throw new CtlError("Class name missing");
+    }
+    / _ "(" _ "make" _ name:Id _ properties:Property* _ ")" _ {	
+		//throw new CtlError("Unknown class " + name);
+    }
+
+GeoObj
+	= Block/Cylinder
+    / Variable {
+    	expected("geometric-object");
+    }
+
+Property
+	= _ "(" _ name:Id _ ")" _ {
+		throw new CtlError("Property "+name+" must have a value");
+	}
+	/ _ "(" _ name:Id _ x:Variable _ ")" _ {
+		return {location:location(),name:name,value:x};
+	}
+    / _ "(" _ name:Id _ x:Variable _ y:Variable _ ")" _ {
+		return {location:location(),name:name,value:new Constant(new Vector3(x,y))};
+	}
+    / _ "(" _ name:Id _ x:Variable _ y:Variable _ z:Variable _ ")" _ {
+		return {location:location(),name:name,value:new Constant(new Vector3(x,y,z))};
+	}
+	/ _ "(" _ name:Id _ x:Variable* _ ")" _ {
+		throw new CtlError("Property "+name+" has too many values");
+	}
+
+Properties
+	= props:Property* {
+    	var v = {
+        	values:{},
+            locations:{},
+            getValue:function(className,type,propName) {
+            	var v = this.values[propName];
+            	if(v==undefined) {
+                	expected(className+" must have a "+type+" property named "+propName);
+                } else {
+                	return getTyped(propName,v.getValue(),type);
+                }
+            }
+        };
+        for(var i in props){
+        	var p = props[i];
+        	v.values[p.name] = p.value;
+            v.locations[p.name] = p.location;
+        }
+        return v;
+    }
+
+Lattice
+	= _ "(" _ "make" _ "lattice" _ props:Properties _ ")" _ {
+        var v = props.getValue("lattice","vector3","size");
+        var x = v.x.getValue()*resolution;
+        var y = v.y.getValue()*resolution;
+        var e = document.createElement("div");
+        e.classList.add("lattice");
+        e.style.height = y+"px";
+        e.style.width = x+"px";
+        return e;
+    }
+
+Block
+	= _ "(" _ "make" _ "block" _ props:Properties _ ")" _ {
+        var size = props.getValue("block","vector3","size");
+        var center = props.getValue("block","vector3","center");
+        var w = size.x.getValue()*resolution;
+        var h = size.y.getValue()*resolution;
+        var lw = parseFloat(params["geometry-lattice"].style.width);
+        var lh = parseFloat(params["geometry-lattice"].style.height);
+        var t = -1*center.y.getValue()*resolution+lh/2-h/2;
+        var l = center.x.getValue()*resolution+lw/2-w/2;
+        var e = document.createElement("div");
+        e.classList.add("block");
+        e.title = text();
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        
+        var textLocation = location();
+    	e.onclick = function(ev){
+    		ev.stopPropagation();
+    		if(!ev.ctrlKey) {
+		        $(".selected").removeClass("selected");
+		        if(typeof(editor)!="undefined") {
+			        var range = new Range(textLocation.start.line-1,textLocation.start.column-1,textLocation.end.line-1,textLocation.end.column-1);
+					editor.getSelection().setRange(range,true);
+			        editor.centerSelection();
+		        }
+	        }
+    	}
+        
+        return e;
+    }
+
+FluxRegion
+	= _ "(" _ "make" _ "flux-region" _ props:Properties _ ")" _ {
+        var size = props.getValue("flux-region","vector3","size");
+        var center = props.getValue("flux-region","vector3","center");
+        var w = size.x.getValue()*resolution;
+        var h = size.y.getValue()*resolution;
+        var lw = parseFloat(params["geometry-lattice"].style.width);
+        var lh = parseFloat(params["geometry-lattice"].style.height);
+        var t = -1*center.y.getValue()*resolution+lh/2-h/2;
+        var l = center.x.getValue()*resolution+lw/2-w/2;
+        var e = document.createElement("div");
+        e.classList.add("flux-region");
+        e.title = text();
+        var textLocation = location();
+    	e.onclick = function(ev){
+    		ev.stopPropagation();
+    		if(!ev.ctrlKey) {
+		        $(".selected").removeClass("selected");
+		        if(typeof(editor)!="undefined") {
+			        var range = new Range(textLocation.start.line-1,textLocation.start.column-1,textLocation.end.line-1,textLocation.end.column-1);
+					editor.getSelection().setRange(range,true);
+			        editor.centerSelection();
+		        }
+	        }
+    	}
+        
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        return e;
+    }
+
+Cylinder
+    = _ "(" _ "make" _ "cylinder" _ props:Properties _ ")" _ {
+        var radius = props.getValue("cylinder","number","radius");
+        var center = props.getValue("cylinder","vector3","center");
+        var cx = center.x.getValue();
+        var cy = center.y.getValue();
+        var w = 2*radius*resolution;
+        var h = 2*radius*resolution;
+        var lw = parseFloat(params["geometry-lattice"].style.width);
+        var lh = parseFloat(params["geometry-lattice"].style.height);
+        var t = -1*cy*resolution+lh/2-h/2;
+        var l = cx*resolution+lw/2-w/2;
+        var e = document.createElement("div");
+        e.classList.add("cylinder");
+        e.title = text();
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        
+		var textLocation = location();
+		e.onselect = function(ev) {
+			ev.stopPropagation();
+			if(e.classList.contains("selected")) {
+				e.classList.remove("selected");
+			} else {
+				e.classList.add("selected");
+			}
+		}
+		
+    	e.onclick = function(ev){
+    		ev.stopPropagation();
+    		if(ev.shiftKey) {
+    			e.classList.add("selected");
+    			var minx = parseInt(e.style.left);
+				var miny = parseInt(e.style.top);
+				var maxx = minx;
+				var maxy = miny;
+				$(".selected").each(function(){
+					var x = parseInt(this.style.left);
+					var y = parseInt(this.style.top);
+					if(x < minx) minx = x;
+					if(y < miny) miny = y;
+					if(x > maxx) maxx = x;
+					if(y > maxy) maxy = y;
+				});
+				$(".cylinder").each(function(){
+					var x = parseInt(this.style.left);
+					var y = parseInt(this.style.top);
+					this.classList.remove("selected");
+					if(x >= minx && x <= maxx && y >= miny && y <= maxy) 
+						this.classList.add("selected");
+				});
+    		} else if(ev.ctrlKey) {
+				if(e.classList.contains("selected")) {
+					e.classList.remove("selected");
+				} else {
+					e.classList.add("selected");
+				}
+			} else {
+				$(".selected").removeClass("selected")
+				e.classList.add("selected");
+			}
+			if(typeof(editor)!="undefined") {
+				var set = false;
+				$(".selected").each(function(){
+					var sl = parseInt(this.getAttribute("start-line"))-1;
+			        var el = parseInt(this.getAttribute("end-line"))-1;
+			        var sc = parseInt(this.getAttribute("start-column"))-1;
+			        var ec = parseInt(this.getAttribute("end-column"))-1;
+					if(set) {
+						var range = new Range(sl,sc,el,ec);
+						editor.getSelection().addRange(range,true);
+					} else {
+						var range = new Range(sl,sc,el,ec);
+						editor.getSelection().setRange(range,true);
+						set = true;
+					}
+				});
+				editor.centerSelection();
+			}
+    	}
+    	
+    	e.setAttribute("start-line",textLocation.start.line);
+        e.setAttribute("end-line",textLocation.end.line);
+        e.setAttribute("start-column",textLocation.start.column);
+        e.setAttribute("end-column",textLocation.end.column);
+    	e.setAttribute("start",textLocation.start.offset);
+        e.setAttribute("end",textLocation.end.offset);
+    	
+    	var sf = props.locations.center.start.offset;
+        var ef = props.locations.center.end.offset;
+        var crange = new Range(props.locations.center.start.line-1,props.locations.center.start.column-1,props.locations.center.end.line-1,props.locations.center.end.column-1);
+        if(typeof(editor)!="undefined") {
+        	e.draggable = true;
+        	var pos = {};
+        	e.ondragstart = function(ev){
+        		pos.x = ev.clientX;
+        		pos.y = ev.clientY;
+        	}
+        	e.ondragend = function (ev) {
+        		var x = cx - (pos.x - ev.clientX)/resolution;
+        		var y = cy + (pos.y - ev.clientY)/resolution;
+        		ev.target.removeAttribute("x");
+        		ev.target.removeAttribute("y");
+        		editor.getSession().replace(crange,"(center "+x+" "+y+") ");
+        	}
+        }
+        
+        return e;
+    }
+
+Number
+	= [+-]? [0-9]+ '.' [0-9]+						{ return parseFloat(text()) }
+	/ [+-]? [0-9]+									{ return parseInt(text()) }
+    / "infinity"									{ return Infinity }
+    / "no-size"										{ return NaN }
+
+Id
+	= [^ \t\n\r;()]+ {return text()}
+
+_ "Space or Comment Optional"
+	= ((";"[^\n]*)? [ \t\n\r])*
+
+__ "Space or Comment Required"
+	= ((";"[^\n]*)? [ \t\n\r])+

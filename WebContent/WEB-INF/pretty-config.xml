@@ -12,6 +12,12 @@
 		<view-id value="/faces/public/login.xhtml" />
 	</url-mapping>
 	
+	<url-mapping id="logout">
+		<pattern value="/logout" />
+		<view-id value="/faces/public/index.xhtml" />
+		<action>#{loginBean.logout}</action>
+	</url-mapping>
+	
 	<url-mapping id="crystals">
 		<pattern value="/crystals" />
 		<view-id value="/faces/restricted/crystals.xhtml" />
@@ -20,6 +26,11 @@
 	<url-mapping id="analysis">
 		<pattern value="/analysis" />
 		<view-id value="/faces/restricted/analysis.xhtml" />
+	</url-mapping>
+	
+	<url-mapping id="editor">
+		<pattern value="/editor" />
+		<view-id value="/faces/restricted/editor.xhtml" />
 	</url-mapping>
 	
 	<url-mapping id="sign-up">

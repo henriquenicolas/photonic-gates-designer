@@ -5,6 +5,8 @@
 
 	<application>
 
+		<resource-handler>br.ufmg.dcc.nanocomp.jsf.PGDResourceHandler</resource-handler>
+
 		<locale-config>
 			<default-locale>pt_BR</default-locale>
 			<supported-locale>en_US</supported-locale>

@@ -8,25 +8,30 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 <ui:composition>
 	<p:dialog widgetVar="analysisDialog" header="Robustness Analysis"
-		modal="true" appendTo="@(body) ">
-		<h:form>
+		modal="true" appendTo="@(body) " height="400" width="600">
+		<h:form id="analysisDialogForm">
+			<h:outputStylesheet library="css" name="analysis-dialog.css"/>
+			<h:outputScript library="js" name="analysis-dialog.js"/>
+			<h:outputScript library="js" name="ctl-parser.js"/>
+			<h:outputScript library="js" name="resolution-parser.js"/>
 			<h:panelGrid columns="2" cellpadding="2">
 				<p:outputLabel for="weight" value="Weight of cylinders" />
 				<p:inputText id="weight" value="#{analysisBean.weight}" />
 
 				<p:outputLabel for="sigma" value="Sigma" />
 				<p:inputText id="sigma" value="#{analysisBean.sigma}" />
-
-				<p:outputLabel for="region" value="Region" />
-				<p:inputText id="region" value="#{analysisBean.region}" />
-			
+							
 			</h:panelGrid>
-			<p:commandButton value="OK" update=":analysisForm:results :message" actionListener="#{analysisBean.run}"
+			<div id="region"></div>
+			<p:inputText type="hidden" widgetVar="region" value="#{analysisBean.region}"/>
+			<p:remoteCommand name="submitAnalysisForm" update=":analysisForm:results :message" actionListener="#{analysisBean.run}" oncomplete="PF('analysisDialog').hide()"/>
+			<p:commandButton value="OK" type="button"
 				styleClass="ui-priority-primary" icon="fa fa-check"
-				onclick="PF('analysisDialog').hide()">
+				onclick="PF('region').jq.val($('.cylinder').map((a,b)=>{return b.classList.contains('selected')?a:undefined}).get().join(','));submitAnalysisForm()">
 				<f:param name="crystal" value="#{param.crystal}"/>
 			</p:commandButton>
 		</h:form>
+		<p:inputText type="hidden" widgetVar="ctl" value="#{analysisBean.crystal.ctl}"/>
 	</p:dialog>
 
 </ui:composition>

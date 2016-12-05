@@ -8,7 +8,15 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 <h:body>
 	<ui:composition>
-		<h:outputStylesheet library="css" name="header.css"/>
+		<h:outputStylesheet library="css" name="header.css" />
+		<p:menubar>
+			<p:menuitem value="Editor" outcome="pretty:editor" icon="fa fa-edit"/>
+			<p:menuitem value="Análises" outcome="pretty:analysis" icon="fa fa-line-chart"/>
+			<f:facet name="options">
+				<p:link value="Sair... (#{loginBean.user.name})"
+					outcome="pretty:logout" />
+			</f:facet>
+		</p:menubar>
 	</ui:composition>
 </h:body>
 </html>

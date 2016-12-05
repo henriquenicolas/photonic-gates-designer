@@ -34,9 +34,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>br.ufmg.dcc.nanotec</groupId>
-			<artifactId>pgd</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>br.ufmg.dcc.nanocomp</groupId>
+			<artifactId>ctl-parser</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 		<!-- JSF -->
