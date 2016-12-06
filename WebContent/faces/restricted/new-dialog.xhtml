@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition>
+	<p:dialog widgetVar="new-dialog" header="Novo Cristal Fotônico" modal="true" appendTo="@(body) ">
+		<h:outputScript library="js" name="new-dialog.js"/>
+		<h:panelGrid columns="2" cellpadding="2">
+		
+		<p:outputLabel for="type" value="Tipo de estrutura:"/>
+		<p:selectOneMenu id="type" widgetVar="a" style="width:150px">
+			<f:selectItem itemLabel="Quadrático " itemValue="0"/> 
+			<f:selectItem itemLabel="Triangular " itemValue="1"/>
+		</p:selectOneMenu>
+		
+		<p:outputLabel for="radius" value="Raio:"/>
+		<p:inputText id="radius" widgetVar="b" value="0.3"/>
+		
+		<p:outputLabel for="db" value="Constante dielétrica do material de fundo:"/>
+		<p:inputText id="db" widgetVar="c" value="1"/>
+		
+		<p:outputLabel for="dh" value="Constante dielétrica do material do cilindro:"/> 
+		<p:inputText id="dh" widgetVar="d" value="12"/>
+		
+		<p:outputLabel for="lattice" value="Parâmetros de rede:"/> 
+		<p:inputText id="lattice" widgetVar="e" value="1"/>
+		
+		<p:outputLabel for="rows" value="Linhas:"/> 
+		<p:inputText id="rows" widgetVar="f" value="30"/>
+		
+		<p:outputLabel for="columns" value="Colunas:"/> 
+		<p:inputText id="columns" widgetVar="g" value="27"/>
+		
+		<p:outputLabel for="resolution" value="Resolução:"/> 
+		<p:inputText id="resolution" widgetVar="h" value="20"/>
+		
+		<p:outputLabel for="pml" value="Espessura das Camadas Perfeitamente Combinadas (PML"/> 
+		<p:inputText id="pml" widgetVar="m" value="1"/>
+				
+		
+		</h:panelGrid>
+    	<p:commandButton type="button" value="OK" id="ok" styleClass="ui-priority-primary" icon="icon-ok" onclick="newCtl()"/>
+	</p:dialog>
+	
+</ui:composition>
+</html>

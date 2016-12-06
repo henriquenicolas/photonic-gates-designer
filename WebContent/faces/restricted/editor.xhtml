@@ -15,8 +15,7 @@
 						<p:commandButton type="button" value="Carregar arquivo"
 							onclick="$('#file-input').click()" />
 						<p:commandButton type="button"
-							value="Nova" icon="ui-icon-document"/>
-
+							title="Nova" icon="ui-icon-document" onclick="PF('new-dialog').show();"/>
 						<p:commandButton type="button"
 							title="Baixar" icon="ui-icon-disk" />
 					</f:facet>
@@ -41,5 +40,6 @@
 		<h:outputScript library="js" name="highlight.js" />
 		<h:outputScript library="js" name="editor.js" />
 		<h:outputScript library="js" name="ctl-parser.js" />
+		<ui:include src="new-dialog.xhtml"/>
 	</ui:define>
 </ui:composition>

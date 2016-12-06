@@ -3,12 +3,12 @@ package br.ufmg.dcc.nanocomp.bean;
 import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
-import org.apache.commons.io.IOUtils;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -33,12 +33,12 @@ public class CrystalsBean extends AbstractBean {
 	}
 	
 	public void upload(FileUploadEvent file) {
-		try {
+		try (Scanner scanner = new Scanner(file.getFile().getInputstream())){
 			PhotonicCrystal s = new PhotonicCrystal();
 			s.setName(file.getFile().getFileName());
 			s.setOwner(getSessionBean(LoginBean.class).getUser());
 			s.setDate(new Date());
-			s.setCtl(IOUtils.toString(file.getFile().getInputstream()));
+			s.setCtl(scanner.useDelimiter("\\Z").next());
 			getDao(CrystalDao.class).save(s);
 			addMessage("cristal carregada com sucesso!!!");
 			this.crystals = getDao(CrystalDao.class).listSimulationsByUser(getUser());

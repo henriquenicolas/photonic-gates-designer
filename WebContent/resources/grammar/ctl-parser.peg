@@ -94,10 +94,21 @@ Set
           }
           return true
         } value:ListGeoObj _ ")" _ {
-        	params["geometry"] = value;
             var l = params["geometry-lattice"];
             for(var i in value) {
             	l.appendChild(value[i]);
+            }
+    }
+    / _ "(" _ "set!" __ "sources" _ &{
+          if(params["geometry-lattice"]==undefined){
+            throw new CtlError("The geometry-lattice parameter must be set before sources can be");
+          }
+          return true
+        } value:Variable _ ")" _ {
+        	value = value.getValue();
+            var l = params["geometry-lattice"];
+        	for(var i in value) {
+                l.appendChild(value[i].getValue());
             }
     }
     / _ "(" _ "set!" __ "geometry" _ value:Variable _ ")" _ {
@@ -482,7 +493,8 @@ ListGeoObj
     }
 
 Class
-	= _ "(" _ "make" _ properties:Property* _ ")" _ {	
+	= Source
+    / _ "(" _ "make" _ properties:Property* _ ")" _ {	
 		throw new CtlError("Class name missing");
     }
     / _ "(" _ "make" _ name:Id _ properties:Property* _ ")" _ {	
@@ -590,6 +602,8 @@ FluxRegion
         var center = props.getValue("flux-region","vector3","center");
         var w = size.x.getValue()*resolution;
         var h = size.y.getValue()*resolution;
+        var cx = center.x.getValue();
+        var cy = center.y.getValue();
         var lw = parseFloat(params["geometry-lattice"].style.width);
         var lh = parseFloat(params["geometry-lattice"].style.height);
         var t = -1*center.y.getValue()*resolution+lh/2-h/2;
@@ -618,8 +632,84 @@ FluxRegion
         e.style.width = w+"px";
         e.style.top = t+"px";
         e.style.left = l+"px";
+        
+        var sf = props.locations.center.start.offset;
+        var ef = props.locations.center.end.offset;
+        var crange = new Range(props.locations.center.start.line-1,props.locations.center.start.column-1,props.locations.center.end.line-1,props.locations.center.end.column-1);
+        if(typeof(editor)!="undefined") {
+        	e.draggable = true;
+        	var pos = {};
+        	e.ondragstart = function(ev){
+        		pos.x = ev.clientX;
+        		pos.y = ev.clientY;
+        	}
+        	e.ondragend = function (ev) {
+        		var x = cx - (pos.x - ev.clientX)/resolution;
+        		var y = cy + (pos.y - ev.clientY)/resolution;
+        		editor.getSession().replace(crange,"(center "+x+" "+y+") ");
+        	}
+        }
+        
         return e;
     }
+
+Source
+	= _ "(" _ "make" _ "source" _ props:Properties _ ")" _ {
+        var size = props.getValue("source","vector3","size");
+        var center = props.getValue("source","vector3","center");
+        var cx = center.x.getValue();
+        var cy = center.y.getValue();
+        var w = size.x.getValue()*resolution;
+        var h = size.y.getValue()*resolution;
+        var lw = parseFloat(params["geometry-lattice"].style.width);
+        var lh = parseFloat(params["geometry-lattice"].style.height);
+        var t = -1*center.y.getValue()*resolution+lh/2-h/2;
+        var l = center.x.getValue()*resolution+lw/2-w/2;
+        var e = document.createElement("div");
+        e.classList.add("source");
+        e.title = text();
+        var textLocation = location();
+    	e.onclick = function(ev){
+    		ev.stopPropagation();
+    		if(!ev.ctrlKey) {
+		        $(".selected").removeClass("selected");
+		        if(typeof(editor)!="undefined") {
+			        var range = new Range(textLocation.start.line-1,textLocation.start.column-1,textLocation.end.line-1,textLocation.end.column-1);
+					editor.getSelection().setRange(range,true);
+			        editor.centerSelection();
+		        }
+	        }
+    	}
+        
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        e.style.height = h+"px";
+        e.style.width = w+"px";
+        e.style.top = t+"px";
+        e.style.left = l+"px";
+        
+        var sf = props.locations.center.start.offset;
+        var ef = props.locations.center.end.offset;
+        var crange = new Range(props.locations.center.start.line-1,props.locations.center.start.column-1,props.locations.center.end.line-1,props.locations.center.end.column-1);
+        if(typeof(editor)!="undefined") {
+        	e.draggable = true;
+        	var pos = {};
+        	e.ondragstart = function(ev){
+        		pos.x = ev.clientX;
+        		pos.y = ev.clientY;
+        	}
+        	e.ondragend = function (ev) {
+        		var x = cx - (pos.x - ev.clientX)/resolution;
+        		var y = cy + (pos.y - ev.clientY)/resolution;
+        		editor.getSession().replace(crange,"(center "+x+" "+y+") ");
+        	}
+        }
+        
+        return e;
+    }
+
 
 Cylinder
     = _ "(" _ "make" _ "cylinder" _ props:Properties _ ")" _ {
@@ -724,8 +814,6 @@ Cylinder
         	e.ondragend = function (ev) {
         		var x = cx - (pos.x - ev.clientX)/resolution;
         		var y = cy + (pos.y - ev.clientY)/resolution;
-        		ev.target.removeAttribute("x");
-        		ev.target.removeAttribute("y");
         		editor.getSession().replace(crange,"(center "+x+" "+y+") ");
         	}
         }
