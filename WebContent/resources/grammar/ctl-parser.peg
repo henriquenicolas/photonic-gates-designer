@@ -58,7 +58,8 @@
         "at-beginning":{},
         "at-end":{},
         "run-until":{},
-        "run-sources+":{}
+        "run-sources+":{},
+        "at-every":{}
     };
     
 	var memory = {};

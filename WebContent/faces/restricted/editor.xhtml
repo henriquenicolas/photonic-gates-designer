@@ -6,40 +6,52 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions"
 	template="templates/model.xhtml">
+	<ui:define name="header">
+		<h:form style="display:flex;justify-content:space-between;">
+			<p:menubar>
+				<p:menuitem value="Abrir arquivo" onclick="$('#file-input').click()"
+					icon="fa fa-folder-open" />
+				<p:menuitem value="Salvar arquivo" icon="fa fa-floppy-o" />
+				<p:menuitem value="Nova" icon="ui-icon-document" onclick="PF('new-dialog').show();"/>
+				<p:menuitem value="Baixar" icon="fa fa-download" />
+				<p:menuitem value="Simular" icon="fa fa-cogs" onclick="simulate();return false" />
+			</p:menubar>
+			<p:menubar>
+				<p:menuitem value="Análises" outcome="pretty:analysis"
+					icon="fa fa-line-chart" />
+				<p:menuitem value="Sair... (#{loginBean.user.name})"
+					outcome="pretty:logout" />
+			</p:menubar>
+		</h:form><!-- Input is out of form because it's not supposed to be uploaded -->
+		<input id="file-input" type="file" onchange="handleFileSelect(event)" />
+	</ui:define>
 	<ui:define name="main">
 		<h:outputStylesheet library="css" name="editor.css" />
 		<pe:layoutPane position="west" size="500">
-			<pe:layoutPane position="north">
-				<p:toolbar>
-					<f:facet name="left">
-						<p:commandButton type="button" value="Carregar arquivo"
-							onclick="$('#file-input').click()" />
-						<p:commandButton type="button"
-							title="Nova" icon="ui-icon-document" onclick="PF('new-dialog').show();"/>
-						<p:commandButton type="button"
-							title="Baixar" icon="ui-icon-disk" />
-					</f:facet>
-				</p:toolbar>
-				<input id="file-input" type="file"
-					onchange="handleFileSelect(event)" />
-			</pe:layoutPane>
 			<pe:layoutPane position="center">
 				<f:facet name="header">
-					<h:outputText value="Código fonte"/>
+					<h:outputText value="Código fonte" />
 				</f:facet>
 				<div id="cli-editor"></div>
 			</pe:layoutPane>
 		</pe:layoutPane>
 		<pe:layoutPane position="center">
-			<f:facet name="header">
-				<h:outputText value="Cristal"/>
-			</f:facet>
-			<div id="gui-editor" onkeydown="editorKeydown(event)" tabindex="0" />
+			<pe:layoutPane position="center">
+				<f:facet name="header">
+					<h:outputText value="Cristal" />
+				</f:facet>
+				<div id="gui-editor" onkeydown="editorKeydown(event)" tabindex="0" />
+			</pe:layoutPane>
 		</pe:layoutPane>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.6/ace.js"></script>
 		<h:outputScript library="js" name="highlight.js" />
 		<h:outputScript library="js" name="editor.js" />
 		<h:outputScript library="js" name="ctl-parser.js" />
 		<ui:include src="new-dialog.xhtml"/>
+	</ui:define>
+	<ui:define name="footer">
+		<div id="info" class="ui-widget">
+			<span>Bem vindo ao editor de cristais fotônicos</span>
+		</div>
 	</ui:define>
 </ui:composition>

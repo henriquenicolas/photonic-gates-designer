@@ -14,7 +14,28 @@
 	bottom: 0;
 	font-size: 0;
 	background-color: #272822;
-	overflow: scroll;
+	overflow: auto;
+}
+
+#gui-editor>canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: 0;
+	-webkit-transition: opacity 1s ease-in-out;
+	-moz-transition: opacity 1s ease-in-out;
+	-o-transition: opacity 1s ease-in-out;
+	transition: opacity 1s ease-in-out;
+}
+
+#gui-editor>canvas.opaque {
+	opacity: 1;
+}
+
+#simulation {
+	position: absolute;
+	left: 0;
+	top: 0;
 }
 
 #file-input {
@@ -40,13 +61,13 @@
 
 .source {
 	position: absolute;
-    border-style: ridge;
-    border-width: 2px;
-    border-color: gold;
-    background-color: goldenrod;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
+	border-style: ridge;
+	border-width: 2px;
+	border-color: gold;
+	background-color: goldenrod;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .cylinder {
@@ -62,4 +83,23 @@
 
 .cylinder.selected {
 	border-color: #f69c55;
+}
+
+#info {
+	display: flex;
+	flex-direction: column;
+	height: 30px;
+	font-size: 1em;
+}
+
+#info>span {
+	color: yellowgreen;
+}
+
+#info>span.warn {
+	color: yellow;
+}
+
+#info>span.error {
+	color: orange;
 }
