@@ -59,7 +59,8 @@
         "at-end":{},
         "run-until":{},
         "run-sources+":{},
-        "at-every":{}
+        "at-every":{},
+        "pw-amp":{}
     };
     
 	var memory = {};
@@ -727,8 +728,8 @@ Cylinder
         var e = document.createElement("div");
         e.classList.add("cylinder");
         e.title = text();
-        e.style.height = h+"px";
-        e.style.width = w+"px";
+        e.style.height = Math.round(h)+"px";
+        e.style.width = Math.round(w)+"px";
         e.style.top = t+"px";
         e.style.left = l+"px";
         

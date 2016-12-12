@@ -1,6 +1,7 @@
-resolution = 10;
-editor = null;
-ws = null;
+var resolution = 20;
+var editor = null;
+var ws = null;
+var speed = 500;
 
 //Configuring editor
 $(document).ready(()=>{
@@ -33,18 +34,20 @@ $(document).ready(()=>{
 			},0);
 		}
 	});
+	editor.setValue(PF("ctl").jq.val());
 });
 
 function simulate() {
 	var info = document.getElementById("info");
 	$(info).empty();
+	$("#gui-editor>canvas").remove();
 	var footer = document.getElementById("footerLayoutPane");
 	var gui = document.getElementById("gui-editor");
 	var h = $("#gui-editor>div").height()
 	var w = $("#gui-editor>div").width();
 	
 	function addInfo(m) {
-		var p = document.createElement("span");
+		var p = document.createElement("pre");
 		p.innerText = m;
 		info.appendChild(p);
 		footer.scrollTop = footer.scrollHeight;
@@ -59,18 +62,21 @@ function simulate() {
 		addInfo(m).classList.add("error");
 	}
 	
-	var ws = new WebSocket("ws://localhost:8080/meep-server/websocket");
+	function addSucc(m) {
+		addInfo(m).classList.add("succ");
+	}
+	
+	if(ws) ws.close();
+	
+	ws = new WebSocket("ws://localhost:8080/meep-server/execute");
 	ws.binaryType = 'arraybuffer';
 	
 	ws.onopen = () => {
-		var text = editor.getValue();
-		var buf = new ArrayBuffer(text.length*2);
-		var bufView = new Uint16Array(buf);
-		l = text.length
-		for (var i=0; i<l; i++) {
-		    bufView[i] = text.charCodeAt(i);
+		var lines = editor.getSession().getDocument().getAllLines();
+		for(var i in lines) {
+			ws.send(lines[i]);
 		}
-		ws.send(buf)
+		ws.send("(exit)");
 	}
 	
 	ws.onmessage = e => {
@@ -82,10 +88,10 @@ function simulate() {
 				addInfo(m.substring(5,m.length))
 			} else if(m.startsWith("error:")) {
 				addError(m.substring(6,m.length))
+			} else if(m.startsWith("succ:")) {
+				addSucc(m.substring(5,m.length))
 			} else if(m.startsWith("warn:")) {
 				addWarn(m.substring(5,m.length))
-			} else if(m == "end:simulation"){
-				ws.send("");
 			} else if(m == "end") {
 				ws.close();
 			} else {
@@ -108,7 +114,7 @@ function simulate() {
 		}
 	}
 	ws.onclose = () => {
-		addError("Disconected");
+		
 	}
 	ws.onerror = e => {
 		addError("Conection to meep server failed");
@@ -116,14 +122,21 @@ function simulate() {
 	}
 }
 
-function toggleOpaque(){
-	var o = $(".opaque");
-	o.toggleClass("opaque");
-	var n = o.next();
-	if(n.length==0) n = $($("#gui-editor>canvas")[0]);
-	n.toggleClass("opaque");
-	setTimeout(toggleOpaque,1000);
+var animate = ()=>{
+	var a = $(".opaque");
+	if(a.length) {
+		a.toggleClass("opaque");
+		a = a.next();
+	} else {
+		a = $("#gui-editor>canvas").first();
+	}
+	if(a.length) {
+		a.toggleClass("opaque");
+	}
+	setTimeout(animate,speed);
 }
+
+animate();
 
 function editorKeydown(e) {
 	if(e.keyCode == 90) {
