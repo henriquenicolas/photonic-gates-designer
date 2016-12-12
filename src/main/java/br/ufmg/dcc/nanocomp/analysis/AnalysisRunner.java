@@ -3,13 +3,14 @@ package br.ufmg.dcc.nanocomp.analysis;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import br.ufmg.dcc.nanocomp.ctl.CtlClass;
+import br.ufmg.dcc.nanocomp.ctl.CtlList;
+import br.ufmg.dcc.nanocomp.ctl.CtlVector3;
+import br.ufmg.dcc.nanocomp.ctl.number.CtlDouble;
+import br.ufmg.dcc.nanocomp.ctl.parser.CtlFile;
+import br.ufmg.dcc.nanocomp.ctl.parser.ParserFactory;
 import br.ufmg.dcc.nanocomp.model.RobustnessAnalysis;
-import br.ufmg.dcc.nanotec.ctl.parser.Parser;
-import br.ufmg.dcc.nanotec.ctl.parser.ParserFactory;
-import br.ufmg.dcc.nanotec.model.CtlObject;
-import br.ufmg.dcc.nanotec.model.Cylinder;
-import br.ufmg.dcc.nanotec.model.Simulation;
-import br.ufmg.dcc.nanotec.model.Vector3;
+import br.ufmg.dcc.nanocomp.peg.Parser;
 
 public class AnalysisRunner extends Thread {
 	
@@ -24,25 +25,26 @@ public class AnalysisRunner extends Thread {
 	@Override
 	public void run() {
 		Random random = new Random();
-		Parser parser = ParserFactory.getInstance().buildParser();
-		Simulation s = parser.parse(analysis.getCrystal().getCtl());
-		SimulationRunnerFactory.getInstance().build(s,analysis,true).start();
+		Parser<CtlFile> parser = ParserFactory.getInstance().getParser();
+		CtlFile file = parser.parse(analysis.getCrystal().getCtl());
+		SimulationRunnerFactory.getInstance().build(file,analysis,true).start();
 		for(int j = 0; j<analysis.getWeight(); j++) {
-			s = parser.parse(analysis.getCrystal().getCtl());
+			file = parser.parse(analysis.getCrystal().getCtl());
 			for(String index : analysis.getRegion().split(",")) {
-				CtlObject o = s.getGeometry().get(Integer.valueOf(index));
-				Cylinder c = (Cylinder)o;
+				CtlList geometry = file.getVariable("geometry").listValue();
+				CtlClass cylinder = geometry.get(Integer.valueOf(index)).classValue();
+				CtlVector3 center = cylinder.getProperty("center").vector3Value();
+				
 				double x = (random.nextGaussian()*analysis.getSigma())/1000;
 				double y = (random.nextGaussian()*analysis.getSigma())/1000;
 				double r = (random.nextGaussian()*analysis.getSigma())/1000;
 				
-				Vector3 center = c.getCenter();
-				center.setX(center.getX().doubleValue()+x);
-				center.setY(center.getY().doubleValue()+y);
+				center.setX(new CtlDouble(center.getX().doubleValue()+x));
+				center.setY(new CtlDouble(center.getY().doubleValue()+y));
 				
-				c.setRadius(c.getRadius().doubleValue()+r);
+				cylinder.setProperty("radius" ,new CtlDouble(cylinder.getProperty("radius").doubleValue()+r));
 			}
-			SimulationRunnerFactory.getInstance().build(s,analysis,false).start();
+			SimulationRunnerFactory.getInstance().build(file,analysis,false).start();
 		}
 	}
 

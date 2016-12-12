@@ -17,13 +17,16 @@
 				<p:menuitem value="Simular" icon="fa fa-cogs" onclick="simulate();return false" />
 			</p:menubar>
 			<p:menubar>
-				<p:menuitem value="Análises" outcome="pretty:analysis"
+				<p:menuitem value="Cristais" outcome="pretty:crystals"
 					icon="fa fa-line-chart" />
 				<p:menuitem value="Sair... (#{loginBean.user.name})"
 					outcome="pretty:logout" />
 			</p:menubar>
 		</h:form><!-- Input is out of form because it's not supposed to be uploaded -->
 		<input id="file-input" type="file" onchange="handleFileSelect(event)" />
+		<h:form style="display:none">
+			<p:inputTextarea widgetVar="ctl" value="#{editorBean.ctl}"/>
+		</h:form>
 	</ui:define>
 	<ui:define name="main">
 		<h:outputStylesheet library="css" name="editor.css" />

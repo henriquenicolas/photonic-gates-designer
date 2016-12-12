@@ -11,10 +11,7 @@
 			<p:fileUpload mode="advanced" skinSimple="false" update="crystals :message"
 				auto="true" allowTypes="/(\.|\/)(ctl)$/" fileUploadListener="#{crystalsBean.upload}"/>
 			<p:dataTable id="crystals" var="crystal" value="#{crystalsBean.crystals}">
-				<p:column headerText="Id">
-					<h:outputText value="#{crystal.id}" />
-				</p:column>
-				
+
 				<p:column headerText="Nome">
 					<h:outputText value="#{crystal.name}" />
 				</p:column>
@@ -29,6 +26,13 @@
 						icon="ui-icon-arrowthick-1-s">
 						<p:fileDownload value="#{crystalsBean.download(crystal)}" />
 					</p:commandButton>
+				</p:column>
+				
+				<p:column headerText="Editar">
+					<h:link outcome="pretty:editor">
+						<p:commandButton value="Editar" type="button"/>
+						<f:param name="crystal" value="#{crystal.id}" />
+					</h:link>
 				</p:column>
 
 				<p:column headerText="Análises">

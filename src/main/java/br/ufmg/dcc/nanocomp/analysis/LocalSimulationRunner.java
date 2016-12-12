@@ -14,27 +14,27 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufmg.dcc.nanocomp.ctl.parser.CtlFile;
 import br.ufmg.dcc.nanocomp.dao.DaoException;
 import br.ufmg.dcc.nanocomp.dao.DaoFactory;
 import br.ufmg.dcc.nanocomp.dao.ExecutionDao;
-import br.ufmg.dcc.nanocomp.model.Value;
 import br.ufmg.dcc.nanocomp.model.Execution;
 import br.ufmg.dcc.nanocomp.model.Result;
 import br.ufmg.dcc.nanocomp.model.RobustnessAnalysis;
-import br.ufmg.dcc.nanotec.model.Simulation;
+import br.ufmg.dcc.nanocomp.model.Value;
 
 public class LocalSimulationRunner extends Thread implements SimulationRunner {
 
 	private static final Pattern MEEP_FLUX_PATTERN = Pattern.compile("flux\\d:(.*)");
 	private static final Logger LOGGER = LoggerFactory.getLogger(LocalSimulationRunner.class);
 
-	private Simulation simulation;
+	private CtlFile simulation;
 	private RobustnessAnalysis robustnessAnalysis;
 	private boolean original;
 
 	private Process meepProcess;
 
-	protected LocalSimulationRunner(Simulation simulation, RobustnessAnalysis robustnessAnalysis, boolean original) {
+	protected LocalSimulationRunner(CtlFile simulation, RobustnessAnalysis robustnessAnalysis, boolean original) {
 		this.simulation = simulation;
 		this.robustnessAnalysis = robustnessAnalysis;
 		this.original = original;
