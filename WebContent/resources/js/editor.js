@@ -66,11 +66,11 @@ function simulate() {
 		var text = editor.getValue();
 		var buf = new ArrayBuffer(text.length*2);
 		var bufView = new Uint16Array(buf);
-		l = text.length
+		var l = text.length;
 		for (var i=0; i<l; i++) {
 		    bufView[i] = text.charCodeAt(i);
 		}
-		ws.send(buf)
+		ws.send(buf);
 	}
 	
 	ws.onmessage = e => {

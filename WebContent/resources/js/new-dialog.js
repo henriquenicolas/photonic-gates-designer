@@ -7,14 +7,13 @@ function newCtl(){
 	var rows = parseInt(PF('f').getJQ().val()); 
 	var columns = parseInt(PF('g').getJQ().val()); 
 	var resolution = parseFloat(PF('h').getJQ().val()); 
-	var pml = PF('m').getJQ().val();
+	var pml = parseFloat(PF('m').getJQ().val());
 	
 	var latticeWidth = rows * lattice + radius + lattice;
 	var latticeHeight = columns * lattice + radius + lattice;
-	var latticeSize = "(size " + (latticeWidth+pml) + " "+ (latticeHeight+pml) + " no-size" + ")";
 	
 	var text = "(reset-meep)\n\n";
-	text += "(set! geometry-lattice (make lattice "+latticeSize+"))\n\n";
+	text += "(set! geometry-lattice (make lattice "+"(size " + (latticeWidth+pml+(resolution*0.25)) + " "+ (latticeHeight+pml+(resolution*0.25)) + " no-size" + ")"+"))\n\n";
 	text += "(define-param a " + lattice + ")\n";
 	text += "(define-param r " + radius + ")\n\n";
 	text += "(define-param db " + db + ")\n";
@@ -34,15 +33,12 @@ function newCtl(){
 			}
 		}	
 	} else {
-		var posy = starty;
 		for(var y = 0; y<columns;y++){
-			var posx = startx + ((y%2==1)?lattice/2:0);
+			var posx = -1*startx + ((y%2==1)?lattice/2:0);
 			for(var x = y%2; x<rows; x++){
-				text+="(make cylinder (center "+posx+" "+posy+") (radius r) (height infinity) (material (make dielectric (epsilon dh))))\n";
-				
+				text+="(make cylinder (center "+posx+" (- "+starty+"(* a "+y+"))) (radius r) (height infinity) (material (make dielectric (epsilon dh))))\n";
 				posx+=lattice;
 			}
-			posy+=lattice;
 		}
 	}
 

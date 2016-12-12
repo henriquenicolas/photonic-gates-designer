@@ -3,12 +3,15 @@ package br.ufmg.dcc.nanocomp.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Entity;
+
 import br.ufmg.dcc.nanocomp.model.EntityInterface;
 
 /**
  * Generic interface for all data access objects.
  * @author Jerônimo Nunes Rocha
- * @param <T> The type of the object.
+ * @param <IdType> The type of the primary key of the {@link Entity}
+ * @param <T> The type of the {@link Entity} that this Dao will handle
  */
 public interface Dao<IdType extends Serializable,T extends EntityInterface<IdType>> {
 	

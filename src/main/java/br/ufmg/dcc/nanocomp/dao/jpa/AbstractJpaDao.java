@@ -26,7 +26,6 @@ import br.ufmg.dcc.nanocomp.model.EntityInterface;
 
 /**
  * Abstract JPA Implementation of the Dao interface
- * @author Jerônimo Nunes Rocha
  * @param <T> The generic type of the model class.
  */
 public abstract class AbstractJpaDao<IdType extends Serializable,T extends EntityInterface<IdType>> implements Dao<IdType,T> {

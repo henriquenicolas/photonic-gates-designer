@@ -38,4 +38,9 @@
 		<view-id value="/faces/public/sign-up.xhtml" />
 	</url-mapping>
 	
+	<url-mapping id="meep-servers">
+		<pattern value="/meep-servers" />
+		<view-id value="/faces/restricted/meep-servers.xhtml" />
+	</url-mapping>
+	
 </pretty-config>
