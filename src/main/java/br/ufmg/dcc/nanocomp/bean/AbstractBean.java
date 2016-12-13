@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import br.ufmg.dcc.nanocomp.dao.Dao;
-import br.ufmg.dcc.nanocomp.dao.DaoFactory;
+import br.ufmg.dcc.nanocomp.dao.jpa.JsfJpaDaoFactory;
 import br.ufmg.dcc.nanocomp.model.EntityInterface;
 import br.ufmg.dcc.nanocomp.model.User;
 
@@ -26,10 +26,11 @@ import br.ufmg.dcc.nanocomp.model.User;
  */
 public abstract class AbstractBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
+	
 	
 	protected <IdType extends Serializable,EntityType extends EntityInterface<IdType>,DaoType extends Dao<IdType,EntityType>> DaoType getDao(Class<DaoType> daoClass){
-		return DaoFactory.getInstance().getDao(daoClass);
+		return JsfJpaDaoFactory.getInstance().getDao(daoClass);
 	}
 	
 	/**

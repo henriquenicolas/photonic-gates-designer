@@ -15,9 +15,9 @@
 						<p:outputLabel for="host" value="Host (IP): " />
 						<p:outputLabel for="port" value="Porta: " />
 						<p:outputLabel for="path" value="Caminho: " />
-						<p:inputMask id="host" value="#{meepServerBean.server.host}" />
-						<p:inputMask id="port" value="#{meepServerBean.server.port}" />
-						<p:inputMask id="path" value="#{meepServerBean.server.path}" />
+						<p:inputText id="host" value="#{meepServerBean.server.host}" required="true" />
+						<p:inputNumber id="port" minValue="1" maxValue="65535" value="#{meepServerBean.server.port}" thousandSeparator="" decimalPlaces="0"/>
+						<p:inputText id="path" value="#{meepServerBean.server.path}" required="true"/>
 					</h:panelGrid>
 					<p:commandButton value="Adicionar servidor"
 						styleClass="ui-priority-primary" update=":message servers"

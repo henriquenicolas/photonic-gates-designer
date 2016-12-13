@@ -1,5 +1,6 @@
 package br.ufmg.dcc.nanocomp.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -46,7 +48,37 @@ public class Execution implements EntityInterface<Long> {
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private List<Result> results;
+
+	@Column
+	@Lob
+	private String ctl;
+
+	@ManyToOne
+	@JoinColumn(name="idMeepServer", nullable = false)
+	private MeepServer meepServer;
 	
+	public Execution() {
+		super();
+	}
+	
+	public Execution(MeepServer server, RobustnessAnalysis analysis) {
+		this(server,analysis,analysis.getCrystal().getCtl(),true);
+	}
+	
+	public Execution(MeepServer server, RobustnessAnalysis analysis, String ctl) {
+		this(server,analysis,ctl,false);
+	}
+	
+	public Execution(MeepServer server, RobustnessAnalysis analysis, String ctl, boolean original) {
+		this();
+		this.meepServer = server;
+		this.robustnessAnalysis = analysis;
+		this.date = new Date();
+		this.original = original;
+		this.results = new ArrayList<>();
+		this.ctl = ctl;
+	}
+
 	public List<Value> getValues(double frequency) {
 		TreeMap<Double, Result> map = new TreeMap<>();
 		try {
@@ -97,6 +129,22 @@ public class Execution implements EntityInterface<Long> {
 
 	public void setResults(List<Result> results) {
 		this.results = results;
+	}
+	
+	public String getCtl() {
+		return ctl;
+	}
+	
+	public void setCtl(String ctl) {
+		this.ctl = ctl;
+	}
+	
+	public MeepServer getMeepServer() {
+		return meepServer;
+	}
+	
+	public void setMeepServer(MeepServer meepServer) {
+		this.meepServer = meepServer;
 	}
 
 }

@@ -1,13 +1,12 @@
 package br.ufmg.dcc.nanocomp.analysis;
 
-import br.ufmg.dcc.nanocomp.ctl.parser.CtlFile;
-import br.ufmg.dcc.nanocomp.model.RobustnessAnalysis;
+import br.ufmg.dcc.nanocomp.model.Execution;
 
 public class DefaultSimulationRunnerFactory extends SimulationRunnerFactory {
 
 	@Override
-	public SimulationRunner build(CtlFile file, RobustnessAnalysis analysis, boolean original) {
-		return new LocalSimulationRunner(file,analysis,original);
+	public SimulationRunner build(Execution execution) {
+		return new MeepServerSimulationRunner(execution);
 	}
 
 }

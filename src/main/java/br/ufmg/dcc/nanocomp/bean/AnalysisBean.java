@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.ufmg.dcc.nanocomp.analysis.AnalysisRunner;
 import br.ufmg.dcc.nanocomp.dao.CrystalDao;
 import br.ufmg.dcc.nanocomp.dao.RobustnessAnalysisDao;
 import br.ufmg.dcc.nanocomp.model.FluxRegionResult;
@@ -21,7 +22,7 @@ import br.ufmg.dcc.nanocomp.model.RobustnessAnalysis;
 @ManagedBean(name="analysisBean")
 public class AnalysisBean extends AbstractBean {
 
-	private static final long serialVersionUID = 5L;
+	private static final long serialVersionUID = 6L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(AnalysisBean.class);
 	
 	private PhotonicCrystal crystal;
@@ -71,7 +72,7 @@ public class AnalysisBean extends AbstractBean {
 			robustnessAnalysis.setDate(new Date());
 			robustnessAnalysis.setRegion(this.region);
 			getDao(RobustnessAnalysisDao.class).save(robustnessAnalysis);
-			//new AnalysisRunner(robustnessAnalysis).start();
+			new AnalysisRunner(robustnessAnalysis).start();
 			addMessage("Análise enviada com sucesso para execução");
 			init();
 		} catch (Exception e) {

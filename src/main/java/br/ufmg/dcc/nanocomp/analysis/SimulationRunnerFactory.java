@@ -7,8 +7,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.ufmg.dcc.nanocomp.ctl.parser.CtlFile;
-import br.ufmg.dcc.nanocomp.model.RobustnessAnalysis;
+import br.ufmg.dcc.nanocomp.model.Execution;
 
 public abstract class SimulationRunnerFactory {
 
@@ -36,5 +35,5 @@ public abstract class SimulationRunnerFactory {
 		return instance;
 	}
 
-	public abstract SimulationRunner build(CtlFile file, RobustnessAnalysis analysis, boolean original);
+	public abstract SimulationRunner build(Execution execution);
 }

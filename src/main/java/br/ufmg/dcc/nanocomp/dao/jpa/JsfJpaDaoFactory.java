@@ -4,30 +4,30 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.ufmg.dcc.nanocomp.dao.Dao;
 import br.ufmg.dcc.nanocomp.dao.DaoFactory;
-import br.ufmg.dcc.nanocomp.jsf.JpaFilter;
 import br.ufmg.dcc.nanocomp.model.EntityInterface;
 
-public class JpaDaoFactory extends DaoFactory implements AutoCloseable {
+public class JsfJpaDaoFactory extends DaoFactory {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(JpaDaoFactory.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JsfJpaDaoFactory.class);
+	
+	private static final DaoFactory instance = new JsfJpaDaoFactory();
+	
+	public static DaoFactory getInstance() {
+		return instance;
+	}
 	
 	/**
 	 * A cache to store {@link Dao} objects, since {@link AbstractJpaDao} are thread safe,
 	 * they can be stored and reused 
 	 */
 	private Map<Class<?>,AbstractJpaDao<?,?>> cache;
-	private EntityManager em;
 	
-	public JpaDaoFactory() {
-		em = JpaFilter.getEmf().createEntityManager();
-		em.getTransaction().begin();
+	private JsfJpaDaoFactory() {
 		cache = new HashMap<>();
 	}
 	
@@ -39,7 +39,6 @@ public class JpaDaoFactory extends DaoFactory implements AutoCloseable {
 			if(dao == null){
 				String daoName = daoClass.getPackage().getName()+".jpa.Jpa"+daoClass.getSimpleName();
 				dao = (AbstractJpaDao<?, ?>) Class.forName(daoName).newInstance();
-				dao.setEntityManager(em);
 				cache.put(daoClass, dao);
 			}
 			return (DaoType) dao;
@@ -49,10 +48,4 @@ public class JpaDaoFactory extends DaoFactory implements AutoCloseable {
 		}
 	}
 	
-	@Override
-	public void close() {
-		em.getTransaction().commit();
-		em.close();
-	}
-
 }

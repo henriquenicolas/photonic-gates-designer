@@ -23,6 +23,10 @@ public class JpaFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		emf = Persistence.createEntityManagerFactory("photonic-gates-designer");
 	}
+	
+	public static EntityManagerFactory getEmf() {
+		return emf;
+	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
