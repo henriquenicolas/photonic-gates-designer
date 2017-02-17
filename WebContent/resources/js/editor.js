@@ -7,7 +7,7 @@ var speed = 500;
 $(document).ready(()=>{
 	editor = ace.edit("cli-editor");
 	editor.$blockScrolling = true;
-	editor.setTheme("ace/theme/monokai");
+	editor.setTheme("ace/theme/chrome");
 	editor.getSession().setMode("ace/mode/clojure");
 	editor.getSession().on('change', function(e) {
 		try {
