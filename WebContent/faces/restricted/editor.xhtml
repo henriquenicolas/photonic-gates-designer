@@ -11,11 +11,12 @@
 			<p:menubar>
 				<p:menuitem value="Abrir arquivo" onclick="$('#file-input').click()"
 					icon="fa fa-folder-open" />
-				<p:menuitem value="Salvar arquivo" icon="fa fa-floppy-o" />
+				
 				<p:menuitem value="Nova" icon="ui-icon-document" onclick="PF('new-dialog').show();"/>
-				<p:menuitem value="Baixar" icon="fa fa-download" />
 				<p:menuitem value="Simular" icon="fa fa-cogs" onclick="simulate();return false" />
 			</p:menubar>
+			<!-- <p:menuitem value="Salvar arquivo" icon="fa fa-floppy-o" /> -->
+			<!-- <p:menuitem value="Baixar" icon="fa fa-download" /> -->
 			<p:menubar>
 				<p:menuitem value="Cristais" outcome="pretty:crystals"
 					icon="fa fa-line-chart" />
@@ -26,6 +27,7 @@
 		<input id="file-input" type="file" onchange="handleFileSelect(event)" />
 		<h:form style="display:none">
 			<p:inputTextarea widgetVar="ctl" value="#{editorBean.ctl}"/>
+			<p:inputText widgetVar="meep-server" value="#{editorBean.meepServer}"/>
 		</h:form>
 	</ui:define>
 	<ui:define name="main">

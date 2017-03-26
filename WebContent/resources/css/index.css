@@ -239,9 +239,12 @@ h1, h2, h3, h4, h5 {
 }
 
 /*footer*/
+#lablink { color: white; }
+
 #footer {
+	
 	margin: 0 auto;
-	width: 685px;
+	width: 1272px;
 	height: 75px;
 	padding: 10px;
 	color: #FFFFFF;

@@ -7,7 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 <ui:composition>
-	<p:dialog widgetVar="analysisDialog" header="Robustness Analysis"
+	<p:dialog widgetVar="analysisDialog" header="Análise de Robustez"
 		modal="true" appendTo="@(body) " height="400" width="600">
 		<h:form id="analysisDialogForm">
 			<h:outputStylesheet library="css" name="analysis-dialog.css"/>
@@ -15,7 +15,7 @@
 			<h:outputScript library="js" name="ctl-parser.js"/>
 			<h:outputScript library="js" name="resolution-parser.js"/>
 			<h:panelGrid columns="2" cellpadding="2">
-				<p:outputLabel for="weight" value="Weight of cylinders" />
+				<p:outputLabel for="weight" value="Peso dos cilindros (número de repetições): " />
 				<p:inputText id="weight" value="#{analysisBean.weight}" />
 
 				<p:outputLabel for="sigma" value="Sigma" />
@@ -27,7 +27,7 @@
 			<p:remoteCommand name="submitAnalysisForm" update=":analysisForm:results :message" actionListener="#{analysisBean.run}" oncomplete="PF('analysisDialog').hide()"/>
 			<p:commandButton value="OK" type="button"
 				styleClass="ui-priority-primary" icon="fa fa-check"
-				onclick="PF('region').jq.val($('.cylinder').map((a,b)=>{return b.classList.contains('selected')?a:undefined}).get().join(','));submitAnalysisForm()">
+				onclick="PF('region').jq.val($('.cylinder').map((a,b)=>{return b.classList.contains('selected')?a:undefined}).get().join(','));submitAnalysisForm([{name:'crystal',value:#{analysisBean.crystal.id}}]);PF('analysisDialog').hide()">
 				<f:param name="crystal" value="#{param.crystal}"/>
 			</p:commandButton>
 		</h:form>

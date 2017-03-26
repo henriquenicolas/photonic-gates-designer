@@ -28,7 +28,7 @@ public class MeepServerBean extends AbstractBean {
 	public void init() {
 		server = new MeepServer();
 		server.setPort(8080);
-		server.setPath("/meep-server/process");
+		server.setPath("/meep-server");
 		try {
 			servers = getDao(MeepServerDao.class).list();
 		} catch (DaoException e) {

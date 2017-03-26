@@ -68,7 +68,7 @@ function simulate() {
 	
 	if(ws) ws.close();
 	
-	ws = new WebSocket("ws://localhost:8080/meep-server/execute");
+	ws = new WebSocket(PF('meep-server').jq.val());
 	ws.binaryType = 'arraybuffer';
 	
 	ws.onopen = () => {

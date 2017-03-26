@@ -15,7 +15,7 @@
 			<!-- if you just created the database, maybe you want hibernate to create 
 				a schema for you -->
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -10,6 +10,7 @@
 		<h:form>
 			<p:fileUpload mode="advanced" skinSimple="false" update="crystals :message"
 				auto="true" allowTypes="/(\.|\/)(ctl)$/" fileUploadListener="#{crystalsBean.upload}"/>
+			
 			<p:dataTable id="crystals" var="crystal" value="#{crystalsBean.crystals}">
 
 				<p:column headerText="Nome">
